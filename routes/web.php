@@ -1,7 +1,6 @@
 <?php
 
+use App\Http\Controllers\PdfController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/generate-receipt/', [PdfController::class, 'generateReceipt'])->name('generate.pdf');
