@@ -14,7 +14,7 @@ class Setting extends Model
 
         static::created(function ($model) {
             $model->renameLogoFile();
-            if ($model->isDirty('logo')) {
+            if ($model->isDirty('logo') || $model->isDirty('body_image')) {
                 $model->save();
             }
         });
@@ -27,20 +27,18 @@ class Setting extends Model
     }
     private function renameLogoFile()
     {
-        if ($this->isDirty('logo') && $this->logo !== $this->getOriginal('logo')) {
+        if ($this->isDirty('logo') && $this->logo !== null) {
             $extension = pathinfo($this->logo, PATHINFO_EXTENSION);
-            $newFileName = 'logo/logo.' . $extension;
-        
+            $newFileName = 'logo.' . $extension;
+
             if (Storage::disk('public')->exists($this->logo)) {
-                $oldLogo = $this->getOriginal('logo'); // Ambil logo lama
+                $oldLogo = $this->getOriginal('logo');
                 if ($oldLogo !== null && Storage::disk('public')->exists($oldLogo)) {
                     Storage::disk('public')->delete($oldLogo);
                 }
                 Storage::disk('public')->move($this->logo, $newFileName);
                 $this->logo = $newFileName;
-                $this->saveQuietly();
             }
         }
-        
     }
 }
