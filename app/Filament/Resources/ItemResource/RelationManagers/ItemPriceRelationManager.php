@@ -16,17 +16,18 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class ItemPriceRelationManager extends RelationManager
 {
     protected static string $relationship = 'itemPrice';
-
+    protected static ?string $label = 'Harga Barang';
+    protected static ?string $title = 'Harga Barang';
     public function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('attr')
-                ->label('Atribut (contoh: kg)')
+                ->label('Tipe (contoh: kg)')
                     ->required()
                     ->maxLength(255),
                     TextInput::make('price')
-                    ->label('Price')
+                    ->label('Harga')
                     ->mask(RawJs::make('$money($input)'))
                     ->stripCharacters(',')
                     ->numeric()
@@ -41,9 +42,10 @@ class ItemPriceRelationManager extends RelationManager
             ->recordTitleAttribute('attr')
             ->columns([
                 TextColumn::make('attr')
-                ->label('Attribute (kg)')
+                ->label('Tipe (kg)')
                 ->searchable(),
                 TextColumn::make('price')
+                ->label('Harga')
                 ->money('IDR'),
             ])
             ->filters([
@@ -52,7 +54,7 @@ class ItemPriceRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                 ->mutateFormDataUsing(function (array $data, RelationManager $livewire) {
-                    $data['item_id'] = $livewire->ownerRecord->id; // Isi otomatis item_id
+                    $data['item_id'] = $livewire->ownerRecord->id;
                     return $data;
                 }),
             ])

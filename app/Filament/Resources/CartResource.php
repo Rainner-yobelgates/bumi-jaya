@@ -21,8 +21,9 @@ use Illuminate\Support\Facades\View;
 class CartResource extends Resource
 {
     protected static ?string $model = Cart::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $label = 'Keranjang';
+    protected static ?string $navigationLabel = 'Keranjang'; 
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
     protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
@@ -50,13 +51,13 @@ class CartResource extends Resource
                     ->numeric()
                     ->minValue(1)
                     ->default(1)
-                    ->reactive() // Biar bereaksi saat diubah
+                    ->reactive() 
                     ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                        $price = (float) str_replace(',', '', $get('price')); // Ambil harga tanpa format
-                        $quantity = (int) ($state ?? 1); // Ambil jumlah
+                        $price = (float) str_replace(',', '', $get('price')); 
+                        $quantity = (int) ($state ?? 1); 
                         $total = $price * $quantity;
         
-                        $set('total_price', $total); // Format harga total
+                        $set('total_price', $total); 
                     }),
                 TextInput::make('total_price')
                     ->label('Total Harga')
@@ -71,6 +72,7 @@ class CartResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+        ->query(\App\Models\Cart::whereNull('transaction_id'))
             ->columns([
                 TextColumn::make('name')
                 ->label('Nama Barang')
@@ -101,8 +103,8 @@ class CartResource extends Resource
                 ]),
             ])
             ->contentFooter(fn () => view('components.table.extra_row', [
-                'total' => \App\Models\Cart::sum('total_price') // Data hanya untuk view ini
-            ]));
+                'total' => \App\Models\Cart::whereNull('transaction_id')->sum('total_price')
+            ]))->defaultSort('created_at', 'desc');
     }
 
     public static function getRelations(): array

@@ -23,10 +23,10 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class ItemResource extends Resource
 {
     protected static ?string $model = Item::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'Barang'; 
+    protected static ?string $label = 'Barang';
+    protected static ?string $navigationIcon = 'heroicon-o-archive-box';
     protected static ?int $navigationSort = 2;
-
 
     public static function form(Form $form): Form
     {
@@ -55,18 +55,20 @@ class ItemResource extends Resource
                 TextColumn::make('itemPrice')
                 ->label('Harga Barang')
                 ->getStateUsing(fn ($record) => 
-                    $record->itemPrice?->map(fn ($price) => "{$price->attr}: Rp" . number_format($price->price, 0, ',', '.'))
-                    ->join(', ') ?? 'No prices available'
-                )
+                    $record->itemPrice?->map(fn ($price) => 
+                        "{$price->attr}: Rp " . number_format($price->price, 0, ',', '.')
+                    )->join('<br>') ?? 'No prices available'
+                )->html()
             ])
             ->filters([
                 //
             ])
             ->actions([
+                
             Tables\Actions\EditAction::make(),
             Action::make('add_to_cart')
                 ->label('Keranjang')
-                ->icon('heroicon-o-shopping-cart')
+                ->icon('heroicon-m-shopping-bag')
                 ->modalHeading('Pilih Tipe & Jumlah')
                 ->form([
                     Select::make('attribute')
@@ -125,7 +127,7 @@ class ItemResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])->defaultSort('created_at', 'desc');
     }
 
     public static function getRelations(): array

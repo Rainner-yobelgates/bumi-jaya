@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\Login;
+use App\Models\Setting;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -16,17 +18,26 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\URL;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        $logoUrl = '';
+        if (config('app.env') === 'production') {
+            URL::forceScheme('https');
+        }
+        if (Schema::hasTable('settings')) {
+            $logoUrl = asset('storage/' . Setting::first()?->logo);
+        }
         return $panel
             ->default()
             ->id('admin')
-            ->path('admin')
-            ->login()
+            ->path('')
+            ->login(Login::class)
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -35,6 +46,7 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
+            ->brandLogo($logoUrl)
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
