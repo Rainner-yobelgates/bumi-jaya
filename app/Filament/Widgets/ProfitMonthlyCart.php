@@ -8,23 +8,25 @@ use Illuminate\Support\Facades\DB;
 
 class ProfitMonthlyCart extends ChartWidget
 {
-    protected static ?string $heading = 'Chart';
+    protected static ?string $heading = 'Jumlah Pendapatan';
     protected static ?int $sort = 3;
 
     protected function getData(): array
     {
-        $revenueData = Transaction::whereYear('created_at', date('Y')) 
-            ->select(DB::raw('MONTH(created_at) as month'), DB::raw('SUM(total_price) as total'))
-            ->groupBy('month')
-            ->get();
+        $revenueData = Transaction::selectRaw('EXTRACT(MONTH FROM created_at) AS month, SUM(total_price) AS total')
+        ->whereYear('created_at', date('Y'))
+        ->groupBy(DB::raw('EXTRACT(MONTH FROM created_at)'))
+        ->orderBy('month')
+        ->get();
 
         $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        
+
         $revenueArray = array_fill(0, 12, 0);
 
         foreach ($revenueData as $item) {
-            $revenueArray[$item->month - 1] = $item->total;
+            $revenueArray[$item->month - 1] = (float) $item->total;
         }
+
         return [
             'datasets' => [
                 [
