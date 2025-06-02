@@ -1,0 +1,51 @@
+name: Docker Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          install: true
+
+      - name: Login to Docker Registry
+        uses: docker/login-action@v2
+        with:
+          registry: docker.artodigital.id
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image main
+        if: github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
+          tags: ${{vars.DOCKER_END_POINT}}bumijaya:latest
+          push: true
+
+  deploy-production:
+    if: github.ref == 'refs/heads/main'
+    runs-on: self-hosted
+    needs: build
+
+    steps:
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: RollOut Deployment
+        run: |
+          kubectl rollout restart deployment bumijaya -n dummy
