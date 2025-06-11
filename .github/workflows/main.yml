@@ -34,18 +34,3 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: ${{vars.DOCKER_END_POINT}}bumijaya:latest
           push: true
-
-  deploy-production:
-    if: github.ref == 'refs/heads/main'
-    runs-on: self-hosted
-    needs: build
-
-    steps:
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest'
-
-      - name: RollOut Deployment
-        run: |
-          kubectl rollout restart deployment bumijaya -n dummy
