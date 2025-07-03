@@ -123,7 +123,7 @@
             </tr>
             <tr>
                 <td><label>Total Harga:</label></td>
-                <td>Rp. {{ number_format($data->total_price, 0, ',', '.') ?? '0' }}</td>
+                <td>Rp. {{ number_format($data->total, 0, ',', '.') ?? '0' }}</td>
             </tr>
         </table>
         <table class="pro-table">
@@ -149,8 +149,16 @@
                 </tr>
                 @endforeach
                 <tr>
-                    <td colspan="6">Total</td>
+                    <td colspan="6">Total Harga</td>
                     <td>Rp. {{ number_format($data->total_price, 0, ',', '.') ?? '0' }}</td>
+                </tr>
+                <tr>
+                    <td colspan="6">Diskon</td>
+                    <td>Rp. {{ number_format($data->discount, 0, ',', '.') ?? '0' }}</td>
+                </tr>
+                <tr>
+                    <td colspan="6">Harga Setelah Diskon</td>
+                    <td>Rp. {{ number_format($data->total, 0, ',', '.') ?? '0' }}</td>
                 </tr>
             @else
                 <tr>

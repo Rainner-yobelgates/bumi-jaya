@@ -43,6 +43,18 @@ class TransactionResource extends Resource
                     ->stripCharacters(',')
                     ->disabled()
                     ->numeric(),
+                TextInput::make('discount')
+                    ->label('Diskon')
+                    ->mask(RawJs::make('$money($input)'))
+                    ->stripCharacters(',')
+                    ->disabled()
+                    ->numeric(),
+                TextInput::make('total')
+                    ->label('Harga Setelah Diskon')
+                    ->mask(RawJs::make('$money($input)'))
+                    ->stripCharacters(',')
+                    ->disabled()
+                    ->numeric(),
             ]);
     }
 
@@ -59,6 +71,12 @@ class TransactionResource extends Resource
                 ->label('Alamat Pelanggan'),
                 TextColumn::make('total_price')
                 ->label('Total Harga')
+                ->money('IDR'),
+                TextColumn::make('discount')
+                ->label('Diskon')
+                ->money('IDR'),
+                TextColumn::make('total')
+                ->label('Harga Setelah Diskon')
                 ->money('IDR'),
                 TextColumn::make('created_at')
                 ->label('Dibuat')
