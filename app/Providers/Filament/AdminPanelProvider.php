@@ -30,9 +30,9 @@ class AdminPanelProvider extends PanelProvider
         if (config('app.env') === 'production') {
             URL::forceScheme('https');
         }
-        if (Schema::hasTable('settings')) {
-            $logoUrl = asset('storage/' . Setting::first()?->logo);
-        }
+        // if (Schema::hasTable('settings') && Setting::first()) {
+        //     $logoUrl = asset('storage/' . Setting::first()->logo);
+        // }
         return $panel
             ->default()
             ->id('admin')
