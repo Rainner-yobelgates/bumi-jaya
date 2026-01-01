@@ -15,6 +15,6 @@ class PdfController extends Controller
         $data = Transaction::with('carts')->find($id);
         $setting = Setting::first();
         $pdf = Pdf::loadView('pdf.receipt', compact('data', 'setting'));
-        return $pdf->download('receipt_'.$data->nama.'.pdf');
+        return $pdf->download('receipt_'.$data->name.'.pdf');
     }
 }

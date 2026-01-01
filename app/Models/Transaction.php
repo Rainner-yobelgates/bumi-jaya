@@ -10,7 +10,9 @@ class Transaction extends Model
         'name',
         'phone',
         'address',
-        'total_price'
+        'total_price',
+        'discount',
+        'total',
     ];
 
     public function carts()

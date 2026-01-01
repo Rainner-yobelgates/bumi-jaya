@@ -15,7 +15,7 @@ class StatsOverview extends BaseWidget
     {
         $getItem = Item::count();
         $getTransaction = Transaction::whereYear('created_at', date('Y'))->count();
-        $getYearIncome = Transaction::whereYear('created_at', date('Y'))->sum('total_price');
+        $getYearIncome = Transaction::whereYear('created_at', date('Y'))->sum('total');
         return [
             Stat::make('Jumlah Barang', $getItem)->description('Jumlah semua barang')->descriptionIcon('heroicon-m-information-circle', IconPosition::Before),
             Stat::make('Jumlah Transaksi', $getTransaction)->description('Jumlah Transaksi tahun ini')->descriptionIcon('heroicon-m-information-circle', IconPosition::Before),
