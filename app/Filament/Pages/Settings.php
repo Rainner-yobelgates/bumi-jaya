@@ -13,6 +13,8 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Exceptions\Halt;
+use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class Settings extends Page implements HasForms
 
@@ -37,6 +39,10 @@ class Settings extends Page implements HasForms
             ->schema([
                 FileUpload::make('logo')
                     ->image()
+                    ->disk('public')
+                    ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp'])
+                    ->rules(['extensions:png,jpg,jpeg,webp'])
+                    ->getUploadedFileNameForStorageUsing(fn (TemporaryUploadedFile $file): string => (string) Str::uuid() . '.' . $file->guessExtension())
                     ->directory('logo')
                     ->imageEditor()
                     ->maxSize(2048)

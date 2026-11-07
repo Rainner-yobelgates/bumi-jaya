@@ -21,7 +21,7 @@ mkdir -p resources/svg
 
 # Jalankan perintah Laravel
 php artisan optimize:clear
-php artisan migrate --force
+php artisan migrate --seed --force
 php artisan storage:link
 php artisan optimize
 php artisan filament:optimize
